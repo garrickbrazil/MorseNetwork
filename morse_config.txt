@@ -1,0 +1,10 @@
+[Speeds]
+ letterSpace = 700
+ wordSpace = 1500
+
+[User]
+ email = guest@garrickmail.net
+ password = pepsi123
+
+[Misc]
+ port = COM18
