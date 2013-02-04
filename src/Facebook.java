@@ -69,7 +69,7 @@ public class Facebook {
 	
 	/********************************************************************
 	 * Method: loginFacebook()
-	 * Purpose: logs user into banner web
+	 * Purpose: logs user into facebook
 	/*******************************************************************/
 	public boolean loginFacebook(){
 		
@@ -80,39 +80,39 @@ public class Facebook {
 			
 			// Initial load
 			HttpResponse response = this.clientFacebook.execute(initialLoad);
-	        HttpEntity entity = response.getEntity();
-	        if (entity != null) EntityUtils.consume(entity);	
+	        	HttpEntity entity = response.getEntity();
+	        	if (entity != null) EntityUtils.consume(entity);	
 	        
-	        // Parameters
-	        List <NameValuePair> parameters = new ArrayList <NameValuePair>();
-	        parameters.add(new BasicNameValuePair("lsd", ""));
-	        parameters.add(new BasicNameValuePair("email", this.username));
-	        parameters.add(new BasicNameValuePair("pass", this.password));
-	        parameters.add(new BasicNameValuePair("default_persistent", "0"));
-	        parameters.add(new BasicNameValuePair("charset_test", ""));
-	        parameters.add(new BasicNameValuePair("timezone", "300"));
-	        parameters.add(new BasicNameValuePair("lgnrnd", ""));
-	        parameters.add(new BasicNameValuePair("lgnjs", ""));
-	        parameters.add(new BasicNameValuePair("locale", "en_US"));
-	        login.setEntity(new UrlEncodedFormEntity(parameters));
-	        
-	        // Login
-	        response = this.clientFacebook.execute(login);
-	        entity = response.getEntity();
-	        if (entity != null) EntityUtils.consume(entity);
-	        
-			
-	        List<Cookie> cookies = this.clientFacebook.getCookieStore().getCookies();
-	        
-	        // Check cookies
-	        for (int i = 0; i < cookies.size(); i++) if (cookies.get(i).getName().equals("c_user") && !cookies.get(i).getValue().equals("")) this.sessionSet = true;
-	        
-	        // Success
-	        if (sessionSet){ System.out.println("Successfully logged in."); getMainPage(); return true;  }
-	        
-	        // Failure
-	        else { System.out.println("Login failed."); return false; }
-	        
+	        	// Parameters
+		        List <NameValuePair> parameters = new ArrayList <NameValuePair>();
+		        parameters.add(new BasicNameValuePair("lsd", ""));
+		        parameters.add(new BasicNameValuePair("email", this.username));
+		        parameters.add(new BasicNameValuePair("pass", this.password));
+		        parameters.add(new BasicNameValuePair("default_persistent", "0"));
+		        parameters.add(new BasicNameValuePair("charset_test", ""));
+		        parameters.add(new BasicNameValuePair("timezone", "300"));
+		        parameters.add(new BasicNameValuePair("lgnrnd", ""));
+		        parameters.add(new BasicNameValuePair("lgnjs", ""));
+		        parameters.add(new BasicNameValuePair("locale", "en_US"));
+		        login.setEntity(new UrlEncodedFormEntity(parameters));
+		        
+		        // Login
+		        response = this.clientFacebook.execute(login);
+		        entity = response.getEntity();
+		        if (entity != null) EntityUtils.consume(entity);
+		        
+				
+		        List<Cookie> cookies = this.clientFacebook.getCookieStore().getCookies();
+		        
+		        // Check cookies
+		        for (int i = 0; i < cookies.size(); i++) if (cookies.get(i).getName().equals("c_user") && !cookies.get(i).getValue().equals("")) this.sessionSet = true;
+		        
+		        // Success
+		        if (sessionSet){ System.out.println("Successfully logged in."); getMainPage(); return true;  }
+		        
+		        // Failure
+		        else { System.out.println("Login failed."); return false; }
+		        
 		}
 			
 		catch(Exception e){ e.printStackTrace(); this.sessionSet = false; return false; }
@@ -138,21 +138,13 @@ public class Facebook {
 			
 			Elements nameList = composer.getElementsByAttribute("name");
 			
-			for(Element name : nameList){
-				
-				if(name.attr("name").equals("update")) this.update = name.val();
-			}
+			// Get update value
+			for(Element name : nameList) if(name.attr("name").equals("update")) this.update = name.val();
+			
+			// Action link and other parameters
 			this.action = composer.attr("action");
 			this.fb_dtsg = compChildren.get(0).val();
 			this.charset = compChildren.get(1).val();
-			
-			
-			// Write to file
-			//PrintWriter printer = new PrintWriter("artifacts/MainPage.html");
-			//printer.print(html);	    	
-			//printer.close();
-			
-			//System.out.println("Successfully stored \"MainPage.html\".");
 			
 		}
 		
@@ -173,25 +165,17 @@ public class Facebook {
 			HttpPost postMessage = new HttpPost("https://m.facebook.com" + this.action);
 
 			// Parameters
-	        List <NameValuePair> parameters = new ArrayList <NameValuePair>();
-	        parameters.add(new BasicNameValuePair("fb_dtsg", this.fb_dtsg));
-	        parameters.add(new BasicNameValuePair("charset_test", this.charset));
-	        parameters.add(new BasicNameValuePair("status", message));
-	        parameters.add(new BasicNameValuePair("update", this.update));
-	        parameters.add(new BasicNameValuePair("target", ""));
-	        postMessage.setEntity(new UrlEncodedFormEntity(parameters));
-			
-			
+		        List <NameValuePair> parameters = new ArrayList <NameValuePair>();
+		        parameters.add(new BasicNameValuePair("fb_dtsg", this.fb_dtsg));
+		        parameters.add(new BasicNameValuePair("charset_test", this.charset));
+		        parameters.add(new BasicNameValuePair("status", message));
+		        parameters.add(new BasicNameValuePair("update", this.update));
+		        parameters.add(new BasicNameValuePair("target", ""));
+		        postMessage.setEntity(new UrlEncodedFormEntity(parameters));
+				
+			// Execute			
 			HttpResponse response = clientFacebook.execute(postMessage);
 			response.getEntity().consumeContent();
-			//String html = HTMLParser.parse(response);
-			
-			// Write to file
-			//PrintWriter printer = new PrintWriter("artifacts/Post.html");
-			//printer.print(html);	    	
-			//printer.close();
-			
-			//System.out.println("Successfully stored \"Post.html\".");
 			
 		}
 		
@@ -200,5 +184,3 @@ public class Facebook {
 	}
 
 }
-
-
